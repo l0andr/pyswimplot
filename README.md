@@ -2,6 +2,9 @@
 
 `pyswimplot` is a Python library and CLI tool for creating swimmer plots, commonly used in survival analysis. The tool visualizes patient treatment timelines, survival durations, responses to treatment, and statuses (alive, dead, or under therapy). It supports customizable plots with several options for representing patient data, treatment types, and survival outcomes.
 
+![image](https://github.com/user-attachments/assets/e8bb0318-5611-4476-afb9-32b040e7cbf9)
+
+
 ## Features
 
 - Visualizes survival duration for each patient.
