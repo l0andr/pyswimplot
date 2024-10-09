@@ -1,0 +1,11 @@
+#ignore virtialenv
+venv*
+#ignore csv,xls,xlsx files
+*.csv
+*.xls
+*.xlsx
+*.docx
+#ignore .pdf
+*.pdf
+.~lock*
+todo.txt
