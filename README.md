@@ -57,7 +57,7 @@ python swimmer_plot.py -input_csv data.csv -output_file swimmer_plot.pdf \
     -treatment_column "Treatment" -response_column "Response" \
     -status_column "Status" -patient_id_column "PatientID" \
     -max_days 1000 --show
-
+````
 ## Autor
 
 Developed by Andrey Loginov in  <a href="https://www.igs.umaryland.edu/labs/gaykalova/">Gaykalova Lab </a>
