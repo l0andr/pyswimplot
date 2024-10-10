@@ -8,7 +8,7 @@
 ## Features
 
 - Visualizes survival duration for each patient.
-- Displays treatments and responses, including chemotherapy, immunotherapy, surgery, or diagnosis without treatment.
+- Displays treatments and responses
 - Highlights patients currently under therapy.
 - Adds patient IDs, survival status, and survival time labels.
 - Supports generating plots in PDF format.
