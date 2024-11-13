@@ -27,10 +27,12 @@ if __name__ == '__main__':
                         action='store_true')
     parser.add_argument("-plot_title", help="Title of plot", type=str, default="Swimmer plot")
     parser.add_argument("--verbose", help="Verbose level", type=int, default=2)
+    parser.add_argument("--tiff", help="If set, plots will be saved in tiff format", default=False, action='store_true')
     parser.add_argument("--show", help="If set, plots will be shown", default=False,
                         action='store_true')
 
     args = parser.parse_args()
+    tiff_dpi = 100
     input_csv = args.input_csv
     input_delimiter = args.input_delimiter
     df = pd.read_csv(input_csv, delimiter=input_delimiter)
@@ -158,6 +160,8 @@ if __name__ == '__main__':
     custom_lines.append(Line2D([0], [0], color='red', lw=2, linestyle='-', label='Alive/no info'))
     plt.legend(custom_lines, [line.get_label() for line in custom_lines])
     pp.savefig(fig)
+    if args.tiff:
+        fig.savefig(args.output_file.replace('.pdf', '.tiff'), format='tiff',dpi=tiff_dpi)
     pp.close()
     if args.show:
         plt.show()
