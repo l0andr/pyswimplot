@@ -7,9 +7,10 @@ import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from matplotlib.backends.backend_pdf import PdfPages
 
+from version import __version__
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Create swimmer plot for survival analysis",
+    parser = argparse.ArgumentParser(description=f"Create swimmer plot for survival analysis ver({__version__})",
         formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument("-input_csv", help="Input CSV file", type=str, required=True)
     parser.add_argument("-input_delimiter", help="Delimiter for input file", type=str, default=",")
