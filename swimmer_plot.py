@@ -1,4 +1,5 @@
 import argparse
+from math import isnan
 
 import pandas as pd
 import numpy as np
@@ -31,6 +32,8 @@ if __name__ == '__main__':
     parser.add_argument("--tiff", help="If set, plots will be saved in tiff format", default=False, action='store_true')
     parser.add_argument("--show", help="If set, plots will be shown", default=False,
                         action='store_true')
+    parser.add_argument("--sort_by", help="Sort by column", type=str, default="")
+    parser.add_argument("--status_colors", help="Status color", type=str, default="")
 
     args = parser.parse_args()
     tiff_dpi = 100
@@ -62,12 +65,21 @@ if __name__ == '__main__':
         if args.on_therapy_column not in df.columns:
             raise RuntimeError(f"Column {args.on_therapy_column} not found in input CSV file")
         show_in_therapy_status = True
+    if len(args.sort_by) > 0:
+        sort_columns = args.sort_by.split(',')
+    else:
+        sort_columns = [status_column, survival_column]
 
+    if len(args.status_colors) > 0:
+        status_colors = args.status_colors.split(',')
+    else:
+        status_colors = ['red','blue']
+    
     #todo implement variant without treatment_id
     #todo implement different variants of sort (for exampel,sort by patinet_id and treatment_id)
     #todo implement cluster sort
 
-    df = df.sort_values(by=['overall_status','overall_survival',patient_id_column, treatment_id])
+    df = df.sort_values(by=sort_columns+[patient_id_column, treatment_id])
     y = 0
     x = 0
     x1 = 0
@@ -87,7 +99,7 @@ if __name__ == '__main__':
             continue
         elif patinet_id != value[patient_id_column]:
             if show_in_therapy_status:
-                if value[args.on_therapy_column] > 0:
+                if not isnan(value[args.on_therapy_column]) and int(value[args.on_therapy_column]):
                     plot = plt.plot([x+x1], [y], '->', color=color)
             y += 1
             x = 0
@@ -99,9 +111,9 @@ if __name__ == '__main__':
         if x+x1 > max_days:
             x1 = max_days - x
             next_patient = True
-        color = 'red'
+        color = status_colors[0]
         if value['overall_status'] == 1:
-            color = 'blue'
+            color = status_colors[1]
         if len(treatment_column) > 0:
             treat = value[treatment_column]
             try:
@@ -137,7 +149,7 @@ if __name__ == '__main__':
             plt.text(20, y-0.5, str(patinet_id), fontsize=8)
         if plot_right_labels:
             if value['overall_survival'] > max_days:
-                plt.text(max_days, y, " "+str(int(value[args.survival_right_labels_column]))+" days", fontsize=7 )
+                plt.text(max_days, y-0.25, " "+str(int(value[args.survival_right_labels_column]))+" days", fontsize=8 )
 
         plt.xlabel('Survival time (days)')
         plt.ylabel('Patients')
@@ -157,8 +169,8 @@ if __name__ == '__main__':
         custom_lines.append(Line2D([0], [0], color='blue', lw=2, linestyle='--',label='Partial response'))
         custom_lines.append(Line2D([0], [0], color='blue', lw=2, linestyle='-.',label='Stable disease'))
         custom_lines.append(Line2D([0], [0], color='blue', lw=2, linestyle=':', label='Progressive disease'))
-    custom_lines.append(Line2D([0], [0], color='blue', lw=2, linestyle='-', label='Pass away'))
-    custom_lines.append(Line2D([0], [0], color='red', lw=2, linestyle='-', label='Alive/no info'))
+    custom_lines.append(Line2D([0], [0], color=status_colors[1], lw=2, linestyle='-', label='Pass away'))
+    custom_lines.append(Line2D([0], [0], color=status_colors[0], lw=2, linestyle='-', label='Alive/no info'))
     plt.legend(custom_lines, [line.get_label() for line in custom_lines])
     pp.savefig(fig)
     if args.tiff:
