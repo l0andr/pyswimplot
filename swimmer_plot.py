@@ -68,7 +68,7 @@ if __name__ == '__main__':
     if len(args.sort_by) > 0:
         sort_columns = args.sort_by.split(',')
     else:
-        sort_columns = [status_column, survival_column]
+        sort_columns = ['overall_status', 'overall_survival']
 
     if len(args.status_colors) > 0:
         status_colors = args.status_colors.split(',')
@@ -92,6 +92,7 @@ if __name__ == '__main__':
     is_response_column = len(response_column) > 0
     pp = PdfPages(args.output_file)
     fig = plt.figure(figsize=(20, 10))
+    prev_values = None
     for index,value in df.iterrows():
         if patinet_id is None:
             patinet_id = value[patient_id_column]
@@ -99,13 +100,15 @@ if __name__ == '__main__':
             continue
         elif patinet_id != value[patient_id_column]:
             if show_in_therapy_status:
-                if not isnan(value[args.on_therapy_column]) and int(value[args.on_therapy_column]):
+                if not isnan(prev_values[args.on_therapy_column]) and int(prev_values[args.on_therapy_column]):
                     plot = plt.plot([x+x1], [y], '->', color=color)
+                    #print(f"Patient {patinet_id} is currently on therapy {value[args.on_therapy_column]} overall status {value['overall_status']} color={color} y={y}")
             y += 1
             x = 0
             patinet_id = value[patient_id_column]
             next_patient = False
         else:
+            prev_values = value
             x += x1
         x1 = value[survival_column]
         if x+x1 > max_days:
