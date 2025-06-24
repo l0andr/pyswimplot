@@ -28,6 +28,7 @@ if __name__ == '__main__':
     parser.add_argument("-plot_patient_id", help="If set, name of patients will be ploted", default=False,
                         action='store_true')
     parser.add_argument("-plot_title", help="Title of plot", type=str, default="Swimmer plot")
+    parser.add_argument("-font_size", help="Font size for all text elements (labels, ticks, legend)", type=int, default=14)
     parser.add_argument("--verbose", help="Verbose level", type=int, default=2)
     parser.add_argument("--tiff", help="If set, plots will be saved in tiff format", default=False, action='store_true')
     parser.add_argument("--show", help="If set, plots will be shown", default=False,
@@ -46,6 +47,7 @@ if __name__ == '__main__':
     treatment_id = args.treatment_id
     treatment_column = args.treatment_column
     response_column = args.response_column
+    font_size = args.font_size
     all_columns = [survival_column, status_column, patient_id_column, treatment_id, treatment_column, response_column]
     for column in all_columns:
         if len(column) > 0 and column not in df.columns:
@@ -91,7 +93,7 @@ if __name__ == '__main__':
     is_treatment_column = len(treatment_column) > 0
     is_response_column = len(response_column) > 0
     pp = PdfPages(args.output_file)
-    fig = plt.figure(figsize=(20, 10))
+    fig = plt.figure(figsize=(20, 20))
     prev_values = None
     for index,value in df.iterrows():
         if patinet_id is None:
@@ -149,14 +151,18 @@ if __name__ == '__main__':
 
         #write patient_id under each line
         if args.plot_patient_id:
-            plt.text(20, y-0.5, str(patinet_id), fontsize=8)
+            plt.text(20, y-0.5, str(patinet_id), fontsize=font_size)
         if plot_right_labels:
             if value['overall_survival'] > max_days:
-                plt.text(max_days, y-0.25, " "+str(int(value[args.survival_right_labels_column]))+" days", fontsize=8 )
+                plt.text(max_days, y-0.25, " "+str(int(value[args.survival_right_labels_column]))+" d. ", fontsize=font_size )
 
-        plt.xlabel('Survival time (days)')
-        plt.ylabel('Patients')
-        plt.title(args.plot_title)
+        plt.xlabel('Survival time (days)', fontsize=font_size)
+        plt.ylabel('Patients', fontsize=font_size)
+        plt.title(args.plot_title, fontsize=font_size)
+        
+        # Set tick label font sizes
+        plt.xticks(fontsize=font_size)
+        plt.yticks(fontsize=font_size)
     custom_lines = []
     if is_treatment_column:
         custom_lines.append(Line2D([0], [0], color='blue', lw=2, linestyle='-', marker='o', label='Chemotherapy'))
@@ -174,7 +180,8 @@ if __name__ == '__main__':
         custom_lines.append(Line2D([0], [0], color='blue', lw=2, linestyle=':', label='Progressive disease'))
     custom_lines.append(Line2D([0], [0], color=status_colors[1], lw=2, linestyle='-', label='Pass away'))
     custom_lines.append(Line2D([0], [0], color=status_colors[0], lw=2, linestyle='-', label='Alive/no info'))
-    plt.legend(custom_lines, [line.get_label() for line in custom_lines])
+    plt.legend(custom_lines, [line.get_label() for line in custom_lines], fontsize=font_size)
+    plt.tight_layout()
     pp.savefig(fig)
     if args.tiff:
         fig.savefig(args.output_file.replace('.pdf', '.tiff'), format='tiff',dpi=tiff_dpi)
