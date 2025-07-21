@@ -154,7 +154,7 @@ if __name__ == '__main__':
             plt.text(20, y-0.5, str(patinet_id), fontsize=font_size)
         if plot_right_labels:
             if value['overall_survival'] > max_days:
-                plt.text(max_days, y-0.25, " "+str(int(value[args.survival_right_labels_column]))+" d. ", fontsize=font_size )
+                plt.text(max_days, y-0.25, " "+str(int(value[args.survival_right_labels_column]))+" d. ", fontsize=font_size * 0.8 )
 
         plt.xlabel('Survival time (days)', fontsize=font_size)
         plt.ylabel('Patients', fontsize=font_size)
